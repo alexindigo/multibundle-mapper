@@ -1,0 +1,84 @@
+{
+  "cjsTranslate": true,
+  "create": true,
+  "removeCombined": true,
+  "keepBuildDir": false,
+  "preserveLicenseComments": false,
+  "baseUrl": ".",
+  "name": "common",
+  "optimize": "uglify",
+  "outFile": "test/tmp/common.d8cbdeb1970daacdc70c01c3306e31c7.js",
+  "packages": [{
+    "name": "requirejs",
+    "location": "node_modules/requirejs",
+    "main": "require"
+  }, {
+    "name": "rendr/shared",
+    "location": "node_modules/rendr/shared",
+    "main": "app"
+  }, {
+    "name": "rendr/client",
+    "location": "node_modules/rendr/client",
+    "main": "router"
+  }, {
+    "name": "async",
+    "location": "node_modules/async/lib",
+    "main": "async"
+  }, {
+    "name": "backbone",
+    "location": "node_modules/backbone",
+    "main": "backbone"
+  }, {
+    "name": "underscore",
+    "location": "node_modules/lodash",
+    "main": "index"
+  }],
+  "paths": {
+    "omniture": "empty:",
+    "app/lib/tracking/pixel": "empty:",
+    "app/lib/tracking/omniture": "empty:",
+    "app": "test/fixtures/input/app",
+    "assets": "test/fixtures/input/assets",
+    "rendr": "node_modules/rendr",
+    "hammer": "test/fixtures/input/assets/vendor/hammer",
+    "jquery": "test/fixtures/input/assets/vendor/jquery",
+    "jqueryHammer": "test/fixtures/input/assets/vendor/jquery.hammer",
+    "main": "test/fixtures/input/app/main"
+  },
+  "shim": {
+    "async": {
+      "exports": "async"
+    },
+    "backbone": {
+      "exports": "Backbone",
+      "deps": ["jquery", "underscore", "jqueryHammer"]
+    },
+    "underscore": {
+      "exports": "_"
+    },
+    "jquery": {
+      "exports": "jQuery"
+    }
+  },
+  "include": [
+    "requirejs",
+    "rendr/shared",
+    "rendr/client",
+    "async",
+    "backbone",
+    "underscore",
+    "hammer",
+    "jquery",
+    "jqueryHammer",
+    "main",
+    "app/helper",
+    "app/lib/tracking/custom"
+  ],
+  "insertRequire": ["jqueryHammer"],
+  "logLevel": 1,
+  "exclude": [
+    "omniture",
+    "app/lib/tracking/pixel",
+    "app/lib/tracking/omniture"
+  ]
+}

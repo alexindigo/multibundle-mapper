@@ -1,0 +1,44 @@
+{
+  "name": "multibundle-mapper",
+  "version": "1.0.0",
+  "description": "Writes `multibundle` produced bundles mapping to a file of chosen format (.json, .js, .html, etc).",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js",
+    "lint": "eslint -c .eslintrc {*,test/*}.js",
+    "docs": "jsdoc2md --src index.js --private --name-format code --param-list-format list --sort-by scope access category kind order --group-by scope category --separators true > API.md"
+  },
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexindigo/multibundle-mapper.git"
+  },
+  "keywords": [
+    "requirejs",
+    "bundles",
+    "multi",
+    "mapping",
+    "write",
+    "stream",
+    "json",
+    "js",
+    "html"
+  ],
+  "author": "Alex Indigo <iam@alexindigo.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alexindigo/multibundle-mapper/issues"
+  },
+  "homepage": "https://github.com/alexindigo/multibundle-mapper#readme",
+  "dependencies": {
+    "jsonfile2": "^2.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^1.6.0",
+    "jsdoc-to-markdown": "^1.2.0",
+    "pre-commit": "^1.1.1"
+  }
+}

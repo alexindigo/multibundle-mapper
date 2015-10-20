@@ -1,0 +1,38 @@
+{
+  "cjsTranslate": true,
+  "create": true,
+  "removeCombined": true,
+  "keepBuildDir": false,
+  "preserveLicenseComments": false,
+  "baseUrl": ".",
+  "name": "optional",
+  "optimize": "uglify",
+  "outFile": "test/tmp/optional.f242c6ec7db101d485e624c441061180.js",
+  "packages": [],
+  "paths": {
+    "requirejs": "empty:",
+    "rendr/shared": "empty:",
+    "rendr/client": "empty:",
+    "async": "empty:",
+    "backbone": "empty:",
+    "underscore": "empty:",
+    "hammer": "empty:",
+    "jquery": "empty:",
+    "jqueryHammer": "empty:",
+    "main": "empty:",
+    "app/helper": "empty:",
+    "app/lib/tracking/custom": "empty:",
+    "app": "test/fixtures/input/app",
+    "assets": "test/fixtures/input/assets",
+    "rendr": "node_modules/rendr",
+    "omniture": "test/fixtures/input/assets/vendor/s_code"
+  },
+  "shim": {},
+  "include": [
+    "omniture",
+    "app/lib/tracking/pixel",
+    "app/lib/tracking/omniture"
+  ],
+  "insertRequire": [],
+  "logLevel": 1
+}
