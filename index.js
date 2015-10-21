@@ -105,10 +105,10 @@ function Mapper(format, outfile, options)
   }
 
   // when everything collected write it down
-  this.on('finish', this._writer.bind(this, function()
+  this.on('finish', this._writer.bind(this, function(err)
   {
 
-    console.log('SAVED');
+    console.log('\n\n ==== SAVED', err);
 
   }));
 }
@@ -118,48 +118,101 @@ function Mapper(format, outfile, options)
  */
 Mapper.prototype._toJson = function(callback)
 {
-  var outFile = new jsonFile.File(this._outputFile);
+  var _mapper = this
+    , outFile = new jsonFile.File(this._outputFile)
+    ;
 
-  outFile.update(function(err)
+  outFile.update(function(err, save)
   {
-    if (err) throw err;
+    if (err) return callback(err);
 
-    this._writeJson(outFile, callback);
+    this.set(_mapper._markers.mapping, _mapper._accumulator.mapping);
+    this.set(_mapper._markers.bundles, _mapper._accumulator.bundles);
+
+    save(callback);
+  });
+};
+
+/**
+ * [function description]
+ */
+Mapper.prototype._toJs = function(callback)
+{
+  this._readAndWrite(this._outputFile, function(err, data, save)
+  {
+    if (err) return callback(err);
+
+    // if content exists, replace
+    if (data)
+    {
+      data = data.replace(this._markers.mapping, JSON.stringify(this._accumulator.mapping));
+      data = data.replace(this._markers.bundles, JSON.stringify(this._accumulator.bundles));
+    }
+    // otherwise append
+    else
+    {
+      data += '\n;';
+      data += 'requirejs.config({';
+      data += 'paths:' + JSON.stringify(this._accumulator.mapping) + ',';
+      data += 'bundles:' + JSON.stringify(this._accumulator.bundles);
+      data += '});';
+    }
+
+    save(data, callback);
   }.bind(this));
-
-  console.log('_______', this._accumulator);
-};
-
-Mapper.prototype._writeJson = function(file, callback)
-{
-  // reset mapping
-  file.set(this._markers.mapping, this._accumulator.mapping);
-  file.set(this._markers.bundles, this._accumulator.bundles);
-
-  // extra step to preserve dots in the filenames
-  // Object.keys(this._accumulator.bundles).forEach(function(bundle)
-  // {
-  //   file.set(this._markers.mapping + '[' + bundle + ']', this._accumulator.mapping[bundle]);
-  //   file.set(this._markers.bundles + '[' + bundle + ']', this._accumulator.bundles[bundle]);
-  // }.bind);
-
-  file.write(callback);
 };
 
 /**
  * [function description]
  */
-Mapper.prototype._toJs = function()
+Mapper.prototype._toHtml = function(callback)
 {
+  this._readAndWrite(this._outputFile, function(err, data, save)
+  {
+    if (err) return callback(err);
 
+    // if content exists, replace
+    if (data)
+    {
+      data = data.replace(this._markers.mapping, JSON.stringify(this._accumulator.mapping));
+      data = data.replace(this._markers.bundles, JSON.stringify(this._accumulator.bundles));
+    }
+    // otherwise append
+    else
+    {
+      data += '\n<!-- -->\n';
+      data += '<script>requirejs.config({';
+      data += 'paths:' + JSON.stringify(this._accumulator.mapping) + ',';
+      data += 'bundles:' + JSON.stringify(this._accumulator.bundles);
+      data += '});</script>';
+    }
+
+    save(data, callback);
+  }.bind(this));
 };
 
 /**
  * [function description]
  */
-Mapper.prototype._toHtml = function()
+Mapper.prototype._readAndWrite = function(file, callback)
 {
+  fs.exists(file, function(exists)
+  {
+    if (exists)
+    {
+      fs.readFile(file, {encoding: 'utf8'}, function(err, data)
+      {
+        if (err) return callback(err);
 
+        // pass fs.writeFile as save function
+        callback(null, data, fs.writeFile.bind(fs, file));
+      });
+    }
+    else
+    {
+      callback(null, '', fs.writeFile.bind(fs, file));
+    }
+  });
 };
 
 /**
@@ -191,8 +244,8 @@ Mapper.prototype._write = function(bundle, encoding, next)
 {
   var prefixedBundle = this._getPrefixedBundle(bundle.outFile);
 
-  this._accumulator.mapping[bundle.name]    = prefixedBundle;
-  this._accumulator.bundles[prefixedBundle] = bundle.include;
+  this._accumulator.mapping[bundle.name] = prefixedBundle;
+  this._accumulator.bundles[bundle.name] = bundle.include;
 
   next();
 };

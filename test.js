@@ -9,14 +9,27 @@ var Readable = require('stream').Readable
   }
   ;
 
-var stream = Readable({objectMode: true});
-stream._read = function(size){};
-stream.pipe(Mapper.json('./test/tmp/file.json', {prefix: 'http://static.company-cdn.com/javascript/'}));
+// json
+writeData('json', './test/tmp/file.json');
 
-Object.keys(data).forEach(function(key)
+// js
+writeData('js', './test/tmp/file.js');
+
+// html
+writeData('html', './test/tmp/file.html');
+
+// write test data
+function writeData(format, file)
 {
-  stream.push(data[key]);
-});
+  var stream = Readable({objectMode: true});
+  stream._read = function(size){};
+  stream.pipe(Mapper[format](file, {prefix: 'http://static.company-cdn.com/javascript/'}));
 
-// done
-stream.push(null);
+  Object.keys(data).forEach(function(key)
+  {
+    stream.push(data[key]);
+  });
+
+  // done
+  stream.push(null);
+}
