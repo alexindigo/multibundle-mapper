@@ -4,13 +4,14 @@
   "description": "Writes `multibundle` produced bundles mapping to a file of chosen format (.json, .js, .html, etc).",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js",
+    "test": "cp test/input/existing.* test/tmp/ && node test.js",
     "lint": "eslint -c .eslintrc {*,test/*}.js",
-    "docs": "jsdoc2md --src index.js --private --name-format code --param-list-format list --sort-by scope access category kind order --group-by scope category --separators true > API.md"
+    "docs": "jsdoc2md --src index.js --private --name-format code --param-list-format list --sort-by scope access category kind order --group-by scope category --separators true > README.md"
   },
   "pre-commit": [
     "lint",
-    "test"
+    "test",
+    "docs"
   ],
   "repository": {
     "type": "git",

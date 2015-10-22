@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset='utf-8'/>
+    <title>Test Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimal-ui">
+    <link rel="canonical" href="http://www.example.com/page">
+  </head>
+
+  <body class="container">
+    <div class="page">
+      <section id="content">Content</section>
+      <footer>Footer</footer>
+    </div>
+
+    <aside id="sideContent"></aside>
+
+    <div id="modal"></div>
+
+    <script>
+    var appData = {};
+    var bootstrappedData = {};
+    </script>
+    <script data-main="/js/main" src="/js/common.js"></script>
+    <script>
+      requirejs.config(
+      {
+        paths: {"common":"http://static.company-cdn.com/javascript/common.d8cbdeb1970daacdc70c01c3306e31c7","optional":"http://static.company-cdn.com/javascript/optional.f242c6ec7db101d485e624c441061180","maps":"http://static.company-cdn.com/javascript/maps.b371bd03bd498257ded2aae300de5d13","user":"http://static.company-cdn.com/javascript/user.2a25559b93ae406914f97d940e98aa3d"},
+        bundles: {"common":["requirejs","rendr/shared","rendr/client","async","backbone","underscore","hammer","jquery","jqueryHammer","main","app/helper","app/lib/tracking/custom"],"optional":["omniture","app/lib/tracking/pixel","app/lib/tracking/omniture"],"maps":["app/models/maps/maps","app/views/maps/maps"],"user":["app/models/user/user","app/views/user/user"]}
+      });
+    </script>
+  </body>
+</html>

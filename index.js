@@ -1,3 +1,27 @@
+/**
+ * Writable stream that accepts r.js config objects
+ * and writes mapping/bundling meta data into provided file
+ * of specified format (json, js, html).
+ *
+ * [![Build Status](https://travis-ci.org/alexindigo/multibundle-mapper.svg)](https://travis-ci.org/alexindigo/multibundle-mapper)
+ *
+ * @example
+ *
+ * var multibundle = require('multibundle')
+ *   , Mapper      = require('multibundle-mapper')
+ *   , options     = require('./options/bundles.js')
+ *   , config      = require('./options/config.js')
+ *   ;
+ *
+ * // optimize
+ * var bundler = multibundle(config, options);
+ * var bundleMapper = Mapper.json('config/local.json', {prefix: config.prefix});
+ *
+ * bundler.pipe(bundleMapper);
+ *
+ * @module multibundle-mapper
+ */
+
 var fs       = require('fs')
   , path     = require('path')
   , util     = require('util')
@@ -14,9 +38,34 @@ Mapper.JSON = 'please-use-constant:json';
 Mapper.JS   = 'please-use-constant:js';
 Mapper.HTML = 'please-use-constant:html';
 
-// shortcuts for supported formats
+/**
+ * Creates stream for JSON file
+ *
+ * @param {string} filepath - path to the output file
+ * @param {object} options - list of options to adjust Mapper's behavior
+ * @param {function} callback - invoked after all data has been written
+ * @returns {stream.Writable} Writable stream for json file
+ */
 Mapper.json = Mapper.bind(undefined, Mapper.JSON);
-Mapper.js   = Mapper.bind(undefined, Mapper.JS);
+
+/**
+ * Creates stream for JS file
+ *
+ * @param {string} filepath - path to the output file
+ * @param {object} options - list of options to adjust Mapper's behavior
+ * @param {function} callback - invoked after all data has been written
+ * @returns {stream.Writable} Writable stream for js file
+ */
+Mapper.js = Mapper.bind(undefined, Mapper.JS);
+
+/**
+ * Creates stream for HTML file
+ *
+ * @param {string} filepath - path to the output file
+ * @param {object} options - list of options to adjust Mapper's behavior
+ * @param {function} callback - invoked after all data has been written
+ * @returns {stream.Writable} Writable stream for html file
+ */
 Mapper.html = Mapper.bind(undefined, Mapper.HTML);
 
 // default markers
@@ -54,9 +103,10 @@ Mapper.prototype._accumulator =
  * @param {string} format - output file format
  * @param {string} filepath - path to the output file
  * @param {object} options - list of options to adjust Mapper's behavior
- * @alias module:Mapper
+ * @param {function} callback - invoked after all data has been written
+ * @alias module:multibundle-mapper
  */
-function Mapper(format, outfile, options)
+function Mapper(format, outfile, options, callback)
 {
   options = options || {};
 
@@ -74,7 +124,7 @@ function Mapper(format, outfile, options)
 
   if (!(this instanceof Mapper))
   {
-    return new Mapper(format, outfile, options);
+    return new Mapper(format, outfile, options, callback);
   }
 
   // pick marker
@@ -105,16 +155,17 @@ function Mapper(format, outfile, options)
   }
 
   // when everything collected write it down
-  this.on('finish', this._writer.bind(this, function(err)
+  this.on('finish', this._writer.bind(this, callback || function(err)
   {
-
-    console.log('\n\n ==== SAVED', err);
-
+    if (err) throw err;
   }));
 }
 
 /**
- * [function description]
+ * Writes bundles data into JSON file
+ *
+ * @private
+ * @param {function} callback - invoked after file has been written
  */
 Mapper.prototype._toJson = function(callback)
 {
@@ -134,7 +185,10 @@ Mapper.prototype._toJson = function(callback)
 };
 
 /**
- * [function description]
+ * Writes bundles data into JS file
+ *
+ * @private
+ * @param {function} callback - invoked after file has been written
  */
 Mapper.prototype._toJs = function(callback)
 {
@@ -163,7 +217,10 @@ Mapper.prototype._toJs = function(callback)
 };
 
 /**
- * [function description]
+ * Writes bundles data into HTML file
+ *
+ * @private
+ * @param {function} callback - invoked after file has been written
  */
 Mapper.prototype._toHtml = function(callback)
 {
@@ -192,7 +249,14 @@ Mapper.prototype._toHtml = function(callback)
 };
 
 /**
- * [function description]
+ * Checks if file exists and reads from it,
+ * otherwise passes empty content
+ * and writeFile function bound to the file
+ *
+ * @private
+ * @param   {string} file - file path to read
+ * @param   {function} callback - invoked with file's content
+ *                              (or empty string) and write function
  */
 Mapper.prototype._readAndWrite = function(file, callback)
 {
@@ -217,8 +281,10 @@ Mapper.prototype._readAndWrite = function(file, callback)
 
 /**
  * Composes prefixed file path for provided bundle local file
- * @param   {[type]} file [description]
- * @returns {[type]} [description]
+ *
+ * @private
+ * @param   {string} file - bundle's file name
+ * @returns {string} prefix file name sans extension
  */
 Mapper.prototype._getPrefixedBundle = function(file)
 {

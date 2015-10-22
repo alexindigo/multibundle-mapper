@@ -1,0 +1,26 @@
+{
+  "serverData": {
+    "first": [100, 200, 300],
+    "second": {
+      "one": 1,
+      "two": 2,
+      "three": 3
+    }
+  },
+  "appData": {
+    "meta": {
+      "a": 1,
+      "b": 2,
+      "c": 3
+    },
+    "static": {
+      "css": {
+        "bundle": "http://static.company-cdn.com/css/main.70c01c3306e31c7d8cbdeb1970daacdc.css"
+      },
+      "js": {
+        "prefix": "http://static.company-cdn.com/javascript/",
+        "mapping": {}
+      }
+    }
+  }
+}
