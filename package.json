@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "eslint": "^1.6.0",
-    "jsdoc-to-markdown": "^1.2.0",
+    "jsdoc-to-markdown": "^2.0.0",
     "pre-commit": "^1.1.1"
   }
 }
